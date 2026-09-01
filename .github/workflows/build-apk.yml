@@ -19,7 +19,7 @@ jobs:
 
       - name: Extract project
         run: |
-          unzip -q AdPoint_Android_Secure_Next_Batch.zip -d project
+          unzip -q AdPoint_Android_Login_To_Secure_Fixed.zip -d project
           sed -i 's/android.useAndroidX=false/android.useAndroidX=true/g' project/AdPoint_Android/gradle.properties
 
       - name: Find project files

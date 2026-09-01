@@ -19,7 +19,7 @@ jobs:
 
       - name: Extract project
         run: |
-          unzip -q AdPoint_Android_Fixed_v2.zip -d project
+          unzip -q AdPoint_Android_Final.zip -d project
           sed -i 's/android.useAndroidX=false/android.useAndroidX=true/g' project/AdPoint_Android/gradle.properties
 
       - name: Find project files

@@ -1,18 +1,28 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
     <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
         android:label="AdPoint"
         android:allowBackup="false"
         android:supportsRtl="true">
-        <!-- Google demo App ID. Replace with YOUR AdMob App ID before release. -->
+
+        <!-- AdMob App ID -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-6915600224604560~1727059290"/>
-        <activity android:name=".MainActivity" android:exported="true">
-    <intent-filter>
-        <action android:name="android.intent.action.MAIN" />
-        <category android:name="android.intent.category.LAUNCHER" />
-    </intent-filter>
-</activity>
+            android:value="ca-app-pub-6915600226404560~1727059290"/>
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+
+        </activity>
+
     </application>
+
 </manifest>

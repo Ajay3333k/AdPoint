@@ -17,11 +17,6 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Extract project
-        run: |
-          unzip -q AdPoint_Android_LOGIN_GUARANTEED.zip -d project
-          sed -i 's/android.useAndroidX=false/android.useAndroidX=true/g' project/AdPoint_Android/gradle.properties
-
       - name: Find project files
         run: |
           find project -type f | head -50

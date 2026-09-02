@@ -16,7 +16,7 @@ import android.content.res.Configuration;
 
 import com.google.android.gms.ads.*;
 import com.google.android.gms.ads.rewarded.*;
-import com.google.fireputBooleanbase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;

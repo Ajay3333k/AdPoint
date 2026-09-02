@@ -17,10 +17,6 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name:
-        run: |
-          find project -type f | head -50
-
       - name: Install Gradle
         run: |
           wget -q https://services.gradle.org/distributions/gradle-8.9-bin.zip

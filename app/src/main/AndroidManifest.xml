@@ -1,9 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-permission android:name="android.permission.INTERNET"/>
     <application
-        android:theme="@style/AppTheme"
         android:label="AdPoint"
-        android:icon="@drawable/adpoint_icon"
         android:allowBackup="false"
         android:supportsRtl="true">
         <!-- Google demo App ID. Replace with YOUR AdMob App ID before release. -->

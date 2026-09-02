@@ -27,7 +27,7 @@ import java.nio.charset.StandardCharsets;
 public class MainActivity extends Activity {
 
     // Google test rewarded ad. Replace with your approved production ID before release.
-    private static final String AD_UNIT_ID = "ca-app-pub-6915600224604560/8485757967";
+    private static final String AD_UNIT_ID = "ca-app-pub-6915600224604560/2671605768";
 
     private static final int DAILY_LIMIT = 50;
     private static final int POINTS_PER_AD = 50;

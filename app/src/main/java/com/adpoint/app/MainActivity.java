@@ -288,6 +288,7 @@ login.setOnClickListener(v -> {
                          toast("Account creation failed: " + task.getException().getMessage());
      }
         });
+        });
         Button back=new Button(this); back.setText("Back to Login"); back.setAllCaps(false); root.addView(back); back.setOnClickListener(v->buildLogin());
         setContentView(root);
     }

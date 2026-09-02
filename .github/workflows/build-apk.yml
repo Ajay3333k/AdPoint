@@ -17,7 +17,7 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Find project files
+      - name:
         run: |
           find project -type f | head -50
 
@@ -29,11 +29,11 @@ jobs:
 
       - name: Build APK
         run: |
-          cd project/AdPoint_Android
           gradle assembleDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: AdPoint-APK
-          path: project/AdPoint_Android/app/build/outputs/apk/debug/*.apk
+          name: AdPoint-apk
+          path: app/build/outputs/apk/debug/*.apk
+          

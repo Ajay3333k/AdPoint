@@ -161,8 +161,13 @@ public class MainActivity extends Activity {
     public void onCreate(Bundle b) {
         super.onCreate(b);
 
-        mAuth = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance();
+        try {
+    mAuth = FirebaseAuth.getInstance();
+    db = FirebaseFirestore.getInstance();
+} catch (Exception e) {
+    mAuth = null;
+    db = null;
+}
 
         sp = getSharedPreferences("adpoint", MODE_PRIVATE);
         resetDailyCountIfNeeded();

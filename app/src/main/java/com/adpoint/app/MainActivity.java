@@ -946,7 +946,7 @@ login.setOnClickListener(v -> {
                     public void onAdFailedToLoad(LoadAdError e) {
                         rewardedAd = null;
                         if (statusText != null) {
-                            statusText.setText("Ad unavailable right now. Try again shortly.");
+                            statusText.setText("Ad error: " + e.getMessage());
                         }
                     }
                 }

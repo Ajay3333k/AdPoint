@@ -203,7 +203,7 @@ public class MainActivity extends Activity {
         EditText user = new EditText(this);
         user.setHint("Username");
         user.setTextColor(Color.WHITE);
-        user.setHintTextColor(Color.LTGRAY);
+        user.setHintTextColor(Color.WHITE); 
         user.setSingleLine(true);
         user.setText(sp.getString("username", ""));
         root.addView(user, new LinearLayout.LayoutParams(-1, dp(58)));
@@ -211,7 +211,7 @@ public class MainActivity extends Activity {
         EditText pass = new EditText(this);
         pass.setHint("Password");
         pass.setTextColor(Color.WHITE);
-        pass.setHintTextColor(Color.LTGRAY);
+        pass.setHintTextColor(Color.WHITE);
         pass.setSingleLine(true);
         pass.setInputType(0x81);
         root.addView(pass, new LinearLayout.LayoutParams(-1, dp(58)));

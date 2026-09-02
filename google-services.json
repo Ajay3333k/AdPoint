@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "326161859537",
+    "project_id": "adpoint-f48d7",
+    "storage_bucket": "adpoint-f48d7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:326161859537:android:d3651bcc2caba86f4e16f0",
+        "android_client_info": {
+          "package_name": "com.adpoint.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZqC_NUNNYsEZRSLRsq4gzCnK3UtaH2Ys"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

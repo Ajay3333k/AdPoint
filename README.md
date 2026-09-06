@@ -1,6 +1,9 @@
 # AdPoint Android
 
-Native Android starter with a real Google Mobile Ads rewarded0 points
+Native Android starter with a real Google Mobile Ads rewarded-ad integration using Google's DEMO rewarded ad unit.
+
+Current reward rules:
+- 1 completed rewarded ad = 50 points
 - 20 ads/day default cap
 - 2,000 points = ₹10 Google Play redeem request
 

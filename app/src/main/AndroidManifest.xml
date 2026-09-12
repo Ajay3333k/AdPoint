@@ -5,7 +5,9 @@
     <application
         android:label="AdPoint"
         android:allowBackup="false"
-        android:supportsRtl="true">
+        android:supportsRtl="true"
+        android:icon="@drawable/adpoint_logo"
+        android:roundIcon="@drawable/adpoint_logo">
 
         <!-- AdMob App ID -->
         <meta-data

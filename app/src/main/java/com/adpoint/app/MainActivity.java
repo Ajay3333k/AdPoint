@@ -5,6 +5,12 @@ import android.os.Bundle;
 import android.os.Build;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.RectF;
+import android.graphics.Path;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.graphics.drawable.GradientDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkCapabilities;
@@ -189,155 +195,96 @@ public class MainActivity extends Activity {
         LinearLayout root = new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
         root.setGravity(Gravity.CENTER);
-        root.setPadding(dp(24), dp(24), dp(24), dp(24));
-        root.setBackgroundColor(Color.rgb(15, 18, 35));
+        root.setPadding(dp(24), dp(20), dp(24), dp(20));
+        root.setBackgroundColor(Color.rgb(8, 10, 28));
 
-        TextView title = tv("ADPOINT", 32, Color.WHITE);
-        title.setTypeface(null, 1);
-        title.setGravity(Gravity.CENTER);
-        root.addView(title);
-        TextView sub = tv("Login or create a new account to continue", 16, Color.LTGRAY);
-        sub.setGravity(Gravity.CENTER);
-        root.addView(sub);
+        ImageView logo = new ImageView(this);
+        logo.setImageResource(R.drawable.adpoint_logo);
+        logo.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+        root.addView(logo, new LinearLayout.LayoutParams(-1, dp(150)));
+
+        TextView title = tv("Welcome to AdPoint", 28, Color.WHITE);
+        title.setTypeface(null, 1); title.setGravity(Gravity.CENTER); root.addView(title);
+        TextView sub = tv("Watch ads • Earn points • Redeem rewards", 14, Color.LTGRAY);
+        sub.setGravity(Gravity.CENTER); root.addView(sub);
 
         EditText user = new EditText(this);
-        user.setHint("Username");
-        user.setTextColor(Color.WHITE);
-        user.setHintTextColor(Color.WHITE); 
-        user.setSingleLine(true);
+        user.setHint("Enter your email"); user.setHintTextColor(Color.rgb(170,180,210));
+        user.setTextColor(Color.WHITE); user.setSingleLine(true);
         user.setText(sp.getString("username", ""));
         root.addView(user, new LinearLayout.LayoutParams(-1, dp(58)));
 
         EditText pass = new EditText(this);
-        pass.setHint("Password");
-        pass.setTextColor(Color.WHITE);
-        pass.setHintTextColor(Color.WHITE);
-        pass.setSingleLine(true);
-        pass.setInputType(0x81);
+        pass.setHint("Password"); pass.setHintTextColor(Color.rgb(170,180,210));
+        pass.setTextColor(Color.WHITE); pass.setSingleLine(true); pass.setInputType(0x81);
         root.addView(pass, new LinearLayout.LayoutParams(-1, dp(58)));
 
         Button login = new Button(this);
-        login.setText("Login"); login.setAllCaps(false);
-        root.addView(login, new LinearLayout.LayoutParams(-1, dp(56)));
-        
-login.setOnClickListener(v -> {
-    String u = user.getText().toString().trim();
-    String pw = pass.getText().toString();
-
-    if (u.isEmpty()) {
-        toast("Enter your email.");
-        return;
-    }
-
-    if (pw.isEmpty()) {
-        toast("Enter your password.");
-        return;
-    }
-
-    mAuth.signInWithEmailAndPassword(u, pw)
-            .addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    sp.edit()
-                            .putString("username", u)
-                            .putBoolean("loggedIn", true)
-                            .putInt("loginFailures", 0)
-                            .remove("loginLockedUntil")
-                            .apply();
-
-                    addNotification("Login successful.");
-                    buildHome();
-                    loadAd();
-                } else {
-                    toast("Login failed: " + task.getException().getMessage());
-                }
+        login.setText("Login"); login.setAllCaps(false); login.setTextColor(Color.WHITE);
+        login.setBackground(rounded(Color.rgb(70, 65, 220), 18)); root.addView(login, new LinearLayout.LayoutParams(-1, dp(56)));
+        login.setOnClickListener(v -> {
+            String u=user.getText().toString().trim(), pw=pass.getText().toString();
+            if(u.isEmpty()){toast("Enter your email.");return;} if(pw.isEmpty()){toast("Enter your password.");return;}
+            mAuth.signInWithEmailAndPassword(u,pw).addOnCompleteListener(task -> {
+                if(task.isSuccessful()){
+                    sp.edit().putString("username",u).putBoolean("loggedIn",true).putInt("loginFailures",0).remove("loginLockedUntil").apply();
+                    addNotification("Login successful."); buildHome(); loadAd();
+                } else toast("Login failed: "+task.getException().getMessage());
             });
-});
-
-        Button signup = new Button(this);
-        signup.setText("Create Account"); signup.setAllCaps(false);
-        root.addView(signup, new LinearLayout.LayoutParams(-1, dp(56)));
-        signup.setOnClickListener(v -> buildSignup());
+        });
+        Button signup=new Button(this); signup.setText("Create New Account"); signup.setAllCaps(false); signup.setTextColor(Color.WHITE);
+        signup.setBackground(rounded(Color.rgb(25,90,145),18)); root.addView(signup,new LinearLayout.LayoutParams(-1,dp(54)));
+        signup.setOnClickListener(v->buildSignup());
         setContentView(root);
     }
 
     void buildSignup() {
         LinearLayout root = new LinearLayout(this);
-        root.setOrientation(LinearLayout.VERTICAL);
-        root.setGravity(Gravity.CENTER);
-        root.setPadding(dp(24), dp(24), dp(24), dp(24));
-        root.setBackgroundColor(Color.rgb(15, 18, 35));
-        TextView title=tv("Create AdPoint Account",28,Color.WHITE); title.setTypeface(null,1); title.setGravity(Gravity.CENTER); root.addView(title);
-        TextView note=tv("This is a local account for the current development build.",14,Color.LTGRAY); note.setGravity(Gravity.CENTER); root.addView(note);
-        EditText user=new EditText(this); user.setHint("Enter your email"); user.setSingleLine(true); root.addView(user,new LinearLayout.LayoutParams(-1,dp(58)));
-        EditText pass=new EditText(this); pass.setHint("Choose password (min 4 characters)"); pass.setSingleLine(true); pass.setInputType(0x81); root.addView(pass,new LinearLayout.LayoutParams(-1,dp(58)));
-        Button create=new Button(this); create.setText("Create Account"); create.setAllCaps(false); root.addView(create,new LinearLayout.LayoutParams(-1,dp(56)));
-        create.setOnClickListener(v -> {
-            String u=user.getText().toString().trim(), pw=pass.getText().toString();
-            if (u.isEmpty()) { toast("Enter your email."); return; }
-            if (pw.length()<4) { toast("Password must be at least 4 characters."); return; }
-           mAuth.createUserWithEmailAndPassword(u, pw)
-                         .addOnCompleteListener(task -> {
-                                 if (task.isSuccessful()) {
-                                    sp.edit()
-                                                 .putString("username", u)
-                                                 .putBoolean("onboardingDone", true)
-                                                 .putBoolean("loggedIn", true)
-                                                .putInt("loginFailures", 0)
-                                                .apply();
- 
-                    addNotification("Account created successfully.");
-                    toast("Account created successfully.");
-                    buildHome();
-                    loadAd();
-                } else {
-                         toast("Account creation failed: " + task.getException().getMessage());
-     }
-        });
-        });
-        Button back=new Button(this); back.setText("Back to Login"); back.setAllCaps(false); root.addView(back); back.setOnClickListener(v->buildLogin());
+        root.setOrientation(LinearLayout.VERTICAL); root.setGravity(Gravity.CENTER);
+        root.setPadding(dp(24), dp(20), dp(24), dp(20)); root.setBackgroundColor(Color.rgb(8,10,28));
+        ImageView logo=new ImageView(this); logo.setImageResource(R.drawable.adpoint_logo); logo.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+        root.addView(logo,new LinearLayout.LayoutParams(-1,dp(130)));
+        TextView title=tv("Create your AdPoint account",25,Color.WHITE); title.setTypeface(null,1); title.setGravity(Gravity.CENTER); root.addView(title);
+        EditText user=new EditText(this); user.setHint("Enter your email"); user.setHintTextColor(Color.rgb(170,180,210)); user.setTextColor(Color.WHITE); user.setSingleLine(true);
+        root.addView(user,new LinearLayout.LayoutParams(-1,dp(58)));
+        EditText pass=new EditText(this); pass.setHint("Choose password (min 4 characters)"); pass.setHintTextColor(Color.rgb(170,180,210)); pass.setTextColor(Color.WHITE); pass.setSingleLine(true); pass.setInputType(0x81);
+        root.addView(pass,new LinearLayout.LayoutParams(-1,dp(58)));
+        Button create=new Button(this); create.setText("Create Account"); create.setAllCaps(false); create.setTextColor(Color.WHITE); create.setBackground(rounded(Color.rgb(70,65,220),18)); root.addView(create,new LinearLayout.LayoutParams(-1,dp(56)));
+        create.setOnClickListener(v->{String u=user.getText().toString().trim(),pw=pass.getText().toString(); if(u.isEmpty()){toast("Enter your email.");return;} if(pw.length()<4){toast("Password must be at least 4 characters.");return;}
+            mAuth.createUserWithEmailAndPassword(u,pw).addOnCompleteListener(task->{if(task.isSuccessful()){sp.edit().putString("username",u).putBoolean("onboardingDone",true).putBoolean("loggedIn",true).putInt("loginFailures",0).apply(); addNotification("Account created successfully.");toast("Account created successfully.");buildHome();loadAd();} else toast("Account creation failed: "+task.getException().getMessage());});});
+        Button back=new Button(this); back.setText("Back to Login"); back.setAllCaps(false); root.addView(back,new LinearLayout.LayoutParams(-1,dp(52))); back.setOnClickListener(v->buildLogin());
         setContentView(root);
-    }
-
-    void resetDailyCountIfNeeded() {
-        String today = new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(new Date());
-        if (!today.equals(sp.getString("day", ""))) {
-            sp.edit().putString("day", today).putInt("ads", 0).apply();
-        }
-    }
-
-    boolean isOnline() {
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (cm == null) return false;
-        NetworkCapabilities caps = cm.getNetworkCapabilities(cm.getActiveNetwork());
-        return caps != null && (
-                caps.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
-                caps.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
-                caps.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
-        );
     }
 
     void base(int head, int bg) {
         LinearLayout root = new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
-        root.setBackgroundColor(darkMode() ? Color.rgb(18, 20, 28) : bg);
+        root.setBackgroundColor(Color.rgb(9, 11, 31));
 
         LinearLayout header = new LinearLayout(this);
         header.setGravity(Gravity.CENTER_VERTICAL);
-        header.setPadding(dp(12), 0, dp(12), 0);
-        header.setBackgroundColor(head);
+        header.setPadding(dp(12), dp(5), dp(12), dp(5));
+        GradientDrawable hg = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT,
+                new int[]{Color.rgb(28, 22, 90), Color.rgb(15, 100, 155)});
+        header.setBackground(hg);
 
-        TextView h = tv("AdPoint", 25, Color.WHITE);
+        ImageView logo = new ImageView(this);
+        logo.setImageResource(com.adpoint.app.R.drawable.adpoint_logo);
+        logo.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+        header.addView(logo, new LinearLayout.LayoutParams(dp(52), dp(58)));
+
+        TextView h = tv("AdPoint", 24, Color.WHITE);
         h.setTypeface(null, 1);
         header.addView(h, new LinearLayout.LayoutParams(0, -1, 1));
 
-        TextView subtitle = tv("Earn • Track • Redeem", 12, Color.WHITE);
+        TextView subtitle = tv("Earn • Play • Redeem", 11, Color.WHITE);
         subtitle.setGravity(Gravity.CENTER_VERTICAL | Gravity.RIGHT);
         header.addView(subtitle);
-
-        root.addView(header, new LinearLayout.LayoutParams(-1, dp(76)));
+        root.addView(header, new LinearLayout.LayoutParams(-1, dp(68)));
 
         content = new LinearLayout(this);
         content.setOrientation(LinearLayout.VERTICAL);
+        content.setPadding(0, dp(4), 0, dp(8));
 
         ScrollView sc = new ScrollView(this);
         sc.setFillViewport(true);
@@ -346,27 +293,23 @@ login.setOnClickListener(v -> {
 
         LinearLayout nav = new LinearLayout(this);
         nav.setGravity(Gravity.CENTER);
-        nav.setBackgroundColor(darkMode() ? Color.rgb(28, 30, 40) : Color.WHITE);
-
+        nav.setBackgroundColor(Color.rgb(18, 20, 45));
         String[] labels = {"⌂\nHome", "▶\nWatch", "▣\nWallet", "🎁\nRedeem", "●\nProfile"};
-
         for (String x : labels) {
             Button b = new Button(this);
             b.setText(x);
             b.setTextSize(10);
             b.setAllCaps(false);
-            b.setPadding(0, 0, 0, 0);
-
+            b.setTextColor(Color.WHITE);
+            b.setPadding(0,0,0,0);
             nav.addView(b, new LinearLayout.LayoutParams(0, dp(64), 1));
-
             if (x.contains("Home")) b.setOnClickListener(v -> buildHome());
             else if (x.contains("Watch")) b.setOnClickListener(v -> buildWatch());
             else if (x.contains("Wallet")) b.setOnClickListener(v -> buildWallet());
             else if (x.contains("Redeem")) b.setOnClickListener(v -> buildRedeem());
             else b.setOnClickListener(v -> buildProfile());
         }
-
-        root.addView(nav, new LinearLayout.LayoutParams(-1, dp(68)));
+        root.addView(nav, new LinearLayout.LayoutParams(-1, dp(66)));
         setContentView(root);
     }
 
@@ -411,64 +354,119 @@ login.setOnClickListener(v -> {
     }
 
     void buildHome() {
-        base(Color.rgb(25, 84, 165), pageBg());
-
-        add("Welcome back!", 14, Color.GRAY);
-
-        pointsText = tv(points + " points", 36, Color.rgb(20, 30, 65));
-        pointsText.setTypeface(null, 1);
-        content.addView(pointsText);
-
-        adsText = tv("Today's Ads: " + adsToday + " / " + DAILY_LIMIT, 16, Color.DKGRAY);
-        content.addView(adsText);
-
-        card("Earn points", "Complete a rewarded ad and receive " + POINTS_PER_AD + " points.", Color.rgb(25, 84, 165));
-        card("Track activity", "Your ad rewards and redeem requests are stored in History.", Color.rgb(0, 121, 107));
-        card("Redeem rewards", "Choose from ₹30, ₹50, ₹80 or ₹159 demo reward requests.", Color.rgb(220, 20, 20));
-
-        Button b = new Button(this);
-        b.setText("▶ Go to Watch & Earn");
-        b.setAllCaps(false);
-        content.addView(b, new LinearLayout.LayoutParams(-1, dp(56)));
-        b.setOnClickListener(v -> buildWatch());
-
-        if (!isOnline()) {
-            add("⚠ You're offline. The app works locally, but new ads need an internet connection.", 14, Color.rgb(190, 80, 0));
-        }
+        base(Color.rgb(30, 40, 100), pageBg());
+        content.addView(banner(R.drawable.adpoint_home_banner));
+        add("Welcome back!", 14, Color.rgb(180,190,230));
+        TextView pts=tv(points+" POINTS",34,Color.WHITE); pts.setTypeface(null,1); content.addView(pts);
+        add("Today's Ads: "+adsToday+" / "+DAILY_LIMIT,15,Color.LTGRAY);
+        card("⚡ Watch & Earn","Complete rewarded ads and get "+POINTS_PER_AD+" points.",Color.rgb(90,210,255));
+        card("🎁 Redeem","Google Play rewards • ₹30 • ₹50 • ₹80 • ₹159",Color.rgb(110,235,190));
+        actionButton("▶  Watch Ads",v->buildWatch());
+        actionButton("🎁  Redeem Rewards",v->buildRedeem());
+        actionButton("🎟  Referral & Bonus",v->referralPage());
+        actionButton("🏆  Leaderboard",v->leaderboardPage());
+        actionButton("🎁  Scratch & Win",v->scratchPage());
+        if(!isOnline()) add("📡 Offline — internet is required for ads.",14,Color.rgb(255,180,80));
     }
 
     void buildWatch() {
-        base(Color.rgb(24, 20, 48), Color.rgb(10, 12, 28));
-
-        add("Watch & Earn", 26, Color.WHITE);
-
-        pointsText = tv(points + " points", 32, Color.rgb(225, 215, 255));
-        pointsText.setTypeface(null, 1);
-        content.addView(pointsText);
-
-        adsText = tv("Today's Ads: " + adsToday + " / " + DAILY_LIMIT, 16, Color.LTGRAY);
-        content.addView(adsText);
-
-        add("Complete a rewarded ad to receive " + POINTS_PER_AD + " points.", 15, Color.LTGRAY);
-
-        watchButton = new Button(this);
-        watchButton.setText("▶ Watch Ad & Earn " + POINTS_PER_AD + " Points");
-        watchButton.setAllCaps(false);
-        content.addView(watchButton, new LinearLayout.LayoutParams(-1, dp(60)));
-        watchButton.setOnClickListener(v -> watchAd());
-
-        Button retry = new Button(this);
-        retry.setText("Retry loading ad");
-        retry.setAllCaps(false);
-        content.addView(retry);
-        retry.setOnClickListener(v -> loadAd());
-
-        statusText = tv("", 14, Color.LTGRAY);
-        content.addView(statusText);
-
-        add("Daily limit: 50 ads. Rewards are added only after the rewarded-ad SDK confirms completion.", 14, Color.LTGRAY);
-
+        base(Color.rgb(24,20,70),Color.rgb(10,12,28));
+        content.addView(banner(R.drawable.adpoint_watch_banner));
+        add("Your balance: "+points+" points",18,Color.WHITE);
+        add("Today's ads: "+adsToday+" / "+DAILY_LIMIT,14,Color.LTGRAY);
+        watchButton=new Button(this); watchButton.setText("▶  WATCH AD  +50 POINTS"); watchButton.setAllCaps(false);
+        watchButton.setTextColor(Color.WHITE); watchButton.setBackground(rounded(Color.rgb(75,65,220),18));
+        content.addView(watchButton,new LinearLayout.LayoutParams(-1,dp(60))); watchButton.setOnClickListener(v->watchAd());
+        Button retry=new Button(this); retry.setText("↻  Reload Ad"); retry.setAllCaps(false); content.addView(retry); retry.setOnClickListener(v->loadAd());
+        statusText=tv("",14,Color.LTGRAY); content.addView(statusText);
+        add("Maximum 50 rewarded ads per day.",14,Color.LTGRAY);
         update();
+    }
+
+
+    void referralPage() {
+        base(Color.rgb(35,35,95),Color.rgb(9,11,31));
+        add("🎟 Referral Program",28,Color.WHITE);
+        String code=sp.getString("refCode","");
+        if(code.isEmpty()){ code="AP"+Math.abs((sp.getString("username","USER").hashCode()%900000+100000)); sp.edit().putString("refCode",code).apply(); }
+        final String referralCode = code;
+        add("Your referral code",15,Color.LTGRAY);
+        TextView c=tv(referralCode,32,Color.rgb(100,230,255)); c.setTypeface(null,1); c.setGravity(Gravity.CENTER); content.addView(c);
+        actionButton("Copy Referral Code",v->{((android.content.ClipboardManager)getSystemService(CLIPBOARD_SERVICE)).setPrimaryClip(android.content.ClipData.newPlainText("AdPoint Referral",referralCode));toast("Referral code copied.");});
+        EditText enter=new EditText(this); enter.setHint("Enter a friend's referral code"); enter.setHintTextColor(Color.LTGRAY); enter.setTextColor(Color.WHITE); enter.setSingleLine(true);
+        content.addView(enter,new LinearLayout.LayoutParams(-1,dp(54)));
+        actionButton("Apply Referral Code",v->{String x=enter.getText().toString().trim(); if(x.isEmpty()){toast("Enter a referral code.");return;} sp.edit().putString("referredBy",x).apply(); toast("Referral code saved.");});
+        add("Share your code with friends. Referral rewards will be connected to the production backend before launch.", with friends. Referral rewards will be connected to the production backend before launch.",14,Color.LTGRAY);
+    }
+
+    void leaderboardPage() {
+        base(Color.rgb(45,25,95),Color.rgb(9,11,31));
+        add("🏆 Leaderboard",28,Color.WHITE);
+        add("Top AdPoint earners",15,Color.LTGRAY);
+        add("🥇  1. Top Player     — 12,500 pts",18,Color.WHITE);
+        add("🥈  2. Reward Master — 10,800 pts",18,Color.WHITE);
+        add("🥉  3. Point Hunter  — 9,650 pts",18,Color.WHITE);
+        add("Your rank: —",18,Color.rgb(100,230,255));
+        add("Leaderboard shown as demo data until the production backend is connected.",13,Color.LTGRAY);
+    }
+
+    void scratchPage() {
+        base(Color.rgb(35,20,75),Color.rgb(8,10,28));
+        content.addView(banner(R.drawable.adpoint_scratch_banner));
+        add("Scratch the card to reveal your reward!",18,Color.WHITE);
+        add("You can win 10–50 points. Maximum reward: 50 points.",14,Color.LTGRAY);
+        final ScratchCardView card=new ScratchCardView(this);
+        content.addView(card,new LinearLayout.LayoutParams(-1,dp(230)));
+        TextView state=tv("Scratch with your finger ✨",16,Color.rgb(150,225,255)); state.setGravity(Gravity.CENTER); content.addView(state);
+        card.onComplete=()->{
+            int reward=10+(new Random().nextInt(5)*10); // 10,20,30,40,50 only
+            points+=reward; sp.edit().putInt("points",points).putInt("earned",sp.getInt("earned",0)+reward).apply();
+            state.setText("You won "+reward+" points! Loading your rewarded ad…");
+            addNotification("Scratch reward: "+reward+" points.");
+            loadAd();
+            // The scratch itself is the user's initiating action; the rewarded ad is shown immediately.
+            new android.os.Handler().postDelayed(()->watchAd(),500);
+        };
+        actionButton("Back to Home",v->buildHome());
+    }
+
+    class ScratchCardView extends View {
+        Paint cover=new Paint(3), clear=new Paint(3), textPaint=new Paint(3);
+        ArrayList<Path> scratches=new ArrayList<>();
+        Path active; int scratched=0; boolean done=false; Runnable onComplete;
+        ScratchCardView(Context c){
+            super(c); setLayerType(View.LAYER_TYPE_SOFTWARE,null);
+            cover.setColor(Color.rgb(145,150,165)); clear.setStyle(Paint.Style.STROKE);
+            clear.setStrokeWidth(dp(34)); clear.setStrokeCap(Paint.Cap.ROUND);
+            clear.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+            textPaint.setTextAlign(Paint.Align.CENTER);
+        }
+        protected void onDraw(Canvas c){
+            c.saveLayer(0,0,getWidth(),getHeight(),null);
+            GradientDrawable bg=rounded(Color.rgb(48,25,105),22); bg.setBounds(0,0,getWidth(),getHeight()); bg.draw(c);
+            textPaint.setColor(Color.WHITE); textPaint.setTextSize(dp(30)); textPaint.setTypeface(null,1);
+            c.drawText("🎁  50 POINTS MAX",getWidth()/2f,getHeight()/2f, textPaint);
+            textPaint.setTextSize(dp(16)); textPaint.setTypeface(null,0);
+            c.drawText("Scratch to reveal your reward",getWidth()/2f,getHeight()/2f+dp(35),textPaint);
+            cover.setColor(Color.rgb(165,170,185));
+            c.drawRoundRect(new RectF(dp(12),dp(12),getWidth()-dp(12),getHeight()-dp(12)),dp(20),dp(20),cover);
+            textPaint.setColor(Color.rgb(70,75,90)); textPaint.setTextSize(dp(24)); textPaint.setTypeface(null,1);
+            c.drawText("SCRATCH HERE",getWidth()/2f,getHeight()/2f, textPaint);
+            for(Path p:scratches)c.drawPath(p,clear);
+            c.restore();
+        }
+        public boolean onTouchEvent(android.view.MotionEvent e){
+            if(done)return true;
+            if(e.getAction()==android.view.MotionEvent.ACTION_DOWN){
+                active=new Path(); active.moveTo(e.getX(),e.getY()); scratches.add(active); invalidate(); return true;
+            }
+            if(e.getAction()==android.view.MotionEvent.ACTION_MOVE && active!=null){
+                active.lineTo(e.getX(),e.getY()); scratched++; invalidate();
+                if(scratched>=65){done=true; if(onComplete!=null)onComplete.run();}
+                return true;
+            }
+            return true;
+        }
     }
 
     void buildWallet() {
@@ -516,28 +514,14 @@ login.setOnClickListener(v -> {
     }
 
     void buildRedeem() {
-        base(Color.rgb(36, 45, 65), pageBg());
-
-        add("Redeem", 26, Color.rgb(25, 30, 40));
-        add("Google Play Rewards", 16, Color.GRAY);
-        add("Redeem requests are demo requests in this build. A production app needs a real fulfillment process.", 14, Color.DKGRAY);
-
-        Button status = new Button(this);
-        status.setText("Check Redeem Status");
-        status.setAllCaps(false);
-        content.addView(status);
-        status.setOnClickListener(v -> redeemStatusPage());
-
-        redeemCard(30);
-        redeemCard(50);
-        redeemCard(80);
-        redeemCard(159);
-
-        add("Balance: " + points + " points", 17, pageText());
-        String last = sp.getString("lastRedeem", "");
-        if (!last.isEmpty()) add("Latest redeem: " + last + " • Pending", 14, pageText());
+        base(Color.rgb(55,30,90),pageBg());
+        content.addView(banner(R.drawable.adpoint_redeem_banner));
+        add("Google Play Rewards",24,Color.WHITE);
+        add("100 points = ₹1",14,Color.LTGRAY);
+        redeemCard(30); redeemCard(50); redeemCard(80); redeemCard(159);
+        add("Balance: "+points+" points",17,Color.WHITE);
+        actionButton("Check Redeem Status",v->redeemStatusPage());
     }
-
 
     String newRequestId() {
         return "AP-" + System.currentTimeMillis();

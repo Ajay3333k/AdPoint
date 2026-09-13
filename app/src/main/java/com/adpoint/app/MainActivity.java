@@ -396,7 +396,7 @@ public class MainActivity extends Activity {
         EditText enter=new EditText(this); enter.setHint("Enter a friend's referral code"); enter.setHintTextColor(Color.LTGRAY); enter.setTextColor(Color.WHITE); enter.setSingleLine(true);
         content.addView(enter,new LinearLayout.LayoutParams(-1,dp(54)));
         actionButton("Apply Referral Code",v->{String x=enter.getText().toString().trim(); if(x.isEmpty()){toast("Enter a referral code.");return;} sp.edit().putString("referredBy",x).apply(); toast("Referral code saved.");});
-        add("Share your code with friends. Referral rewards will be connected to the production backend before launch.", with friends. Referral rewards will be connected to the production backend before launch.",14,Color.LTGRAY);
+        add("Share your code with friends. Referral rewards will be connected to the production backend before launch.", 14, Color.LTGRAY);
     }
 
     void leaderboardPage() {

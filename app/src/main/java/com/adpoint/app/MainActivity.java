@@ -10,6 +10,7 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.Path;
 import android.graphics.PorterDuff;
+import android.graphics.Typeface;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.drawable.GradientDrawable;
 import android.net.ConnectivityManager;
@@ -472,13 +473,17 @@ public class MainActivity extends Activity {
         protected void onDraw(Canvas c){
             c.saveLayer(0,0,getWidth(),getHeight(),null);
             GradientDrawable bg=rounded(Color.rgb(48,25,105),22); bg.setBounds(0,0,getWidth(),getHeight()); bg.draw(c);
-            textPaint.setColor(Color.WHITE); textPaint.setTextSize(dp(30)); textPaint.setTypeface(null,1);
+            textPaint.setColor(Color.WHITE);
+textPaint.setTextSize(dp(30));
+textPaint.setTypeface(Typeface.DEFAULT_BOLD);
             c.drawText("🎁  50 POINTS MAX",getWidth()/2f,getHeight()/2f, textPaint);
             textPaint.setTextSize(dp(16)); textPaint.setTypeface(null,0);
             c.drawText("Scratch to reveal your reward",getWidth()/2f,getHeight()/2f+dp(35),textPaint);
             cover.setColor(Color.rgb(165,170,185));
             c.drawRoundRect(new RectF(dp(12),dp(12),getWidth()-dp(12),getHeight()-dp(12)),dp(20),dp(20),cover);
-            textPaint.setColor(Color.rgb(70,75,90)); textPaint.setTextSize(dp(24)); textPaint.setTypeface(null,1);
+            textPaint.setColor(Color.rgb(70,75,90));
+textPaint.setTextSize(dp(24));
+textPaint.setTypeface(Typeface.DEFAULT_BOLD); 
             c.drawText("SCRATCH HERE",getWidth()/2f,getHeight()/2f, textPaint);
             for(Path p:scratches)c.drawPath(p,clear);
             c.restore();

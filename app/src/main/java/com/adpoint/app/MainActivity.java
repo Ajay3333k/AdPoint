@@ -132,8 +132,18 @@ public class MainActivity extends Activity {
             sp.edit().putInt("points", storedPoints).putInt("ads", storedAds).apply();
             addNotification("Local data was validated and repaired.");
         }
-    }
+    } 
+   void resetDailyCountIfNeeded() {
+    String today = new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(new Date());
+    String savedDay = sp.getString("day", "");
 
+    if (!today.equals(savedDay)) {
+        sp.edit()
+                .putString("day", today)
+                .putInt("ads", 0)
+                .apply();
+    }
+}
     void addNotification(String message) {
         if (!sp.getBoolean("notifications", true)) return;
 
@@ -486,16 +496,17 @@ public class MainActivity extends Activity {
             c.saveLayer(0,0,getWidth(),getHeight(),null);
             GradientDrawable bg=rounded(Color.rgb(48,25,105),22); bg.setBounds(0,0,getWidth(),getHeight()); bg.draw(c);
             textPaint.setColor(Color.WHITE);
-textPaint.setTextSize(dp(30));
-textPaint.setTypeface(Typeface.DEFAULT_BOLD);
+            textPaint.setTextSize(dp(30));
+            textPaint.setTypeface(Typeface.DEFAULT_BOLD);
             c.drawText("🎁  50 POINTS MAX",getWidth()/2f,getHeight()/2f, textPaint);
-            textPaint.setTextSize(dp(16)); textPaint.setTypeface(null,0);
+            textPaint.setTextSize(dp(16));
+            textPaint.setTypeface(Typeface.DEFAULT);
             c.drawText("Scratch to reveal your reward",getWidth()/2f,getHeight()/2f+dp(35),textPaint);
             cover.setColor(Color.rgb(165,170,185));
             c.drawRoundRect(new RectF(dp(12),dp(12),getWidth()-dp(12),getHeight()-dp(12)),dp(20),dp(20),cover);
             textPaint.setColor(Color.rgb(70,75,90));
-textPaint.setTextSize(dp(24));
-textPaint.setTypeface(Typeface.DEFAULT_BOLD); 
+            textPaint.setTextSize(dp(24));
+            textPaint.setTypeface(Typeface.DEFAULT_BOLD); 
             c.drawText("SCRATCH HERE",getWidth()/2f,getHeight()/2f, textPaint);
             for(Path p:scratches)c.drawPath(p,clear);
             c.restore();

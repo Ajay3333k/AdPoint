@@ -75,7 +75,20 @@ public class MainActivity extends Activity {
         content.addView(tv(s, size, color));
     }
 
+    void actionButton(String label, View.OnClickListener listener) {
+    Button b = new Button(this);
+    b.setText(label);
+    b.setAllCaps(false);
+    b.setTextColor(Color.WHITE);
+    b.setBackground(rounded(Color.rgb(70, 65, 220), 18));
 
+    LinearLayout.LayoutParams p =
+            new LinearLayout.LayoutParams(-1, dp(56));
+    p.setMargins(dp(12), dp(6), dp(12), dp(6));
+
+    content.addView(b, p);
+    b.setOnClickListener(listener);
+}
     String hashPassword(String value) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");

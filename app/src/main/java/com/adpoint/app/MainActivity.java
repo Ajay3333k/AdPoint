@@ -90,6 +90,18 @@ public class MainActivity extends Activity {
     content.addView(b, p);
     b.setOnClickListener(listener);
 }
+    View banner(int imageRes) {
+    ImageView image = new ImageView(this);
+    image.setImageResource(imageRes);
+    image.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+    LinearLayout.LayoutParams p =
+            new LinearLayout.LayoutParams(-1, dp(180));
+    p.setMargins(dp(12), dp(8), dp(12), dp(8));
+
+    image.setLayoutParams(p);
+    return image;
+}
     String hashPassword(String value) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");

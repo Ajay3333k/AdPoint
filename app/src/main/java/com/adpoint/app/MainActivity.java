@@ -352,7 +352,22 @@ public class MainActivity extends Activity {
             buildLogin();
         });
     }
+    private boolean isOnline() {
+    ConnectivityManager cm =
+            (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
 
+    if (cm == null) return false;
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        NetworkCapabilities nc =
+                cm.getNetworkCapabilities(cm.getActiveNetwork());
+
+        return nc != null &&
+                nc.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
+    }
+
+    return false;
+}
     void buildHome() {
         base(Color.rgb(30, 40, 100), pageBg());
         content.addView(banner(R.drawable.adpoint_home_banner));

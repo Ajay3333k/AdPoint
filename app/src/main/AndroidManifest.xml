@@ -6,8 +6,8 @@
         android:label="AdPoint"
         android:allowBackup="false"
         android:supportsRtl="true"
-        android:icon="@drawable/adpoint_logo"
-        android:roundIcon="@drawable/adpoint_logo">
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher"
 
         <!-- AdMob App ID -->
         <meta-data

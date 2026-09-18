@@ -387,9 +387,6 @@ public class MainActivity extends Activity {
         root.setGravity(Gravity.CENTER_HORIZONTAL);
         root.setPadding(dp(24), dp(16), dp(24), dp(16));
         root.setBackgroundColor(Color.rgb(5, 7, 20));
-        ScrollView scroll = new ScrollView(this);
-        scroll.setFillViewport(true);
-        scroll.addView(root);
         return root;
     }
 

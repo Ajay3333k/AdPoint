@@ -225,7 +225,11 @@ public class MainActivity extends Activity {
         points = sp.getInt("points", 0);
         adsToday = sp.getInt("ads", 0);
 
-        MobileAds.initialize(this, status -> {});
+        try {
+    MobileAds.initialize(this, status -> {});
+} catch (Exception e) {
+    // AdMob startup error must not crash AdPoint
+}
 
         // Keep the Firebase session across app restarts. Login is required again only
         // after logout/delete, or if the Firebase session has expired.

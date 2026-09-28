@@ -218,7 +218,12 @@ public void onCreate(Bundle b) {
     points = sp.getInt("points", 0);
     adsToday = sp.getInt("ads", 0);
 
+    try {
+    mAuth = FirebaseAuth.getInstance();
+} catch (Exception e) {
     mAuth = null;
+}
+
 db = null;
     
 }

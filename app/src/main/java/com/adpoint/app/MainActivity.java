@@ -234,6 +234,7 @@ try {
     MobileAds.initialize(this, status -> {});
 } catch (Exception e) {
 }
+ }
 
     void buildLogin() {
         currentPage = "login";

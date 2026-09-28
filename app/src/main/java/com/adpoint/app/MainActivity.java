@@ -210,12 +210,23 @@ public class MainActivity extends Activity {
 public void onCreate(Bundle b) {
     super.onCreate(b);
 
-    TextView test = new TextView(this);
-    test.setText("AdPoint startup OK");
-    test.setTextSize(24);
-    test.setGravity(Gravity.CENTER);
+    sp = getSharedPreferences("adpoint", MODE_PRIVATE);
 
-    setContentView(test);
+    resetDailyCountIfNeeded();
+    validateLocalState();
+
+    points = sp.getInt("points", 0);
+    adsToday = sp.getInt("ads", 0);
+
+    try {
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+    } catch (Exception e) {
+        mAuth = null;
+        db = null;
+    }
+
+    buildLogin();
 }
 
     void buildLogin() {

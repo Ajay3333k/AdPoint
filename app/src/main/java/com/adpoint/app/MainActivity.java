@@ -230,6 +230,9 @@ try {
     db = null;
 }
     
+    try {
+    MobileAds.initialize(this, status -> {});
+} catch (Exception e) {
 }
 
     void buildLogin() {

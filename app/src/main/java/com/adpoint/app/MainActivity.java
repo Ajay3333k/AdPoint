@@ -318,57 +318,112 @@ try {
         root.addView(back, new LinearLayout.LayoutParams(-1, dp(38)));
         back.setOnClickListener(v -> { clearPageHistory(); mAuth.signOut(); buildLogin(); });
 
-        TextView title = tv("Sign Up", 30, Color.WHITE); title.setTypeface(Typeface.DEFAULT_BOLD); title.setGravity(Gravity.CENTER); root.addView(title);
-        TextView welcome = tv("Create Your Account", 20, Color.WHITE); welcome.setGravity(Gravity.CENTER); root.addView(welcome);
-        TextView sub = tv("Join AdPoint to start your journey", 14, Color.GRAY); sub.setGravity(Gravity.CENTER); root.addView(sub);
+        ImageView logo = new ImageView(this);
+        logo.setImageResource(R.drawable.adpoint_logo);
+        logo.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+        root.addView(logo, new LinearLayout.LayoutParams(-1, dp(105)));
 
-        EditText name = authField("👤", "Enter Your Name", false); root.addView(name);
+        TextView title = tv("Create AdPoint Account", 28, Color.WHITE);
+        title.setTypeface(Typeface.DEFAULT_BOLD);
+        title.setGravity(Gravity.CENTER);
+        root.addView(title);
+
+        TextView sub = tv("Join AdPoint and start earning points", 14, Color.GRAY);
+        sub.setGravity(Gravity.CENTER);
+        root.addView(sub);
+
+        Button google = socialButton("G   Continue With Google", v ->
+                toast("Google Sign-In will be connected next."));
+        LinearLayout.LayoutParams gp = new LinearLayout.LayoutParams(-1, dp(52));
+        gp.setMargins(0, dp(16), 0, dp(8));
+        google.setLayoutParams(gp);
+        root.addView(google);
+
+        addAuthDivider(root, "or continue with email");
+
+        EditText name = authField("👤", "Enter Your Name", false);
+        root.addView(name);
+
         EditText user = authField("✉", "Enter Your Gmail", false);
-        user.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS); root.addView(user);
-        EditText pass = authField("🔒", "Enter Your Password", true); root.addView(pass);
-        EditText confirm = authField("🔒", "Confirm Your Password", true); root.addView(confirm);
+        user.setInputType(android.text.InputType.TYPE_CLASS_TEXT |
+                android.text.InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+        root.addView(user);
 
-        CheckBox terms = new CheckBox(this); terms.setText("I agree to Terms and condition"); terms.setTextColor(Color.WHITE); terms.setTextSize(14); root.addView(terms);
+        EditText pass = authField("🔒", "Enter Your Password", true);
+        root.addView(pass);
 
-        Button create = gradientButton("Sign In"); root.addView(create);
+        EditText confirm = authField("🔒", "Confirm Your Password", true);
+        root.addView(confirm);
+
+        CheckBox terms = new CheckBox(this);
+        terms.setText("I agree to Terms and condition");
+        terms.setTextColor(Color.WHITE);
+        terms.setTextSize(14);
+        root.addView(terms);
+
+        Button create = gradientButton("Create Account");
+        root.addView(create);
+
         create.setOnClickListener(v -> {
             String n = name.getText().toString().trim();
             String u = user.getText().toString().trim();
             String pw = pass.getText().toString();
             String cp = confirm.getText().toString();
-            if (n.isEmpty()) { toast("Enter your name."); return; }
-            if (!isGmailFormat(u)) { toast("Enter a valid Gmail address."); return; }
-            if (pw.length() < 6) { toast("Password must be at least 6 characters."); return; }
-            if (!pw.equals(cp)) { toast("Passwords do not match."); return; }
-            if (!terms.isChecked()) { toast("Please agree to the Terms and condition."); return; }
+
+            if (n.isEmpty()) {
+                toast("Enter your name.");
+                return;
+            }
+            if (!isGmailFormat(u)) {
+                toast("Enter a valid Gmail address.");
+                return;
+            }
+            if (pw.length() < 6) {
+                toast("Password must be at least 6 characters.");
+                return;
+            }
+            if (!pw.equals(cp)) {
+                toast("Passwords do not match.");
+                return;
+            }
+            if (!terms.isChecked()) {
+                toast("Please agree to the Terms and condition.");
+                return;
+            }
+
             showAuthLoading(root, true);
             mAuth.createUserWithEmailAndPassword(u, pw).addOnCompleteListener(task -> {
                 showAuthLoading(root, false);
                 if (task.isSuccessful()) {
                     FirebaseUser fu = mAuth.getCurrentUser();
-                    if (fu != null) {
-                        fu.sendEmailVerification();
-                    }
-                    sp.edit().putString("username", u).putBoolean("onboardingDone", true)
-                            .putBoolean("loggedIn", false).putString("displayName", n).putInt("loginFailures", 0).apply();
+                    if (fu != null) fu.sendEmailVerification();
+
+                    sp.edit()
+                            .putString("username", u)
+                            .putBoolean("onboardingDone", true)
+                            .putBoolean("loggedIn", false)
+                            .putString("displayName", n)
+                            .putInt("loginFailures", 0)
+                            .apply();
+
                     mAuth.signOut();
                     addNotification("Account created. Verify your Gmail before signing in.");
                     toast("Verification link sent to your Gmail.");
                     buildLogin();
                 } else {
-                    String msg = task.getException() != null ? task.getException().getMessage() : "Account creation failed";
+                    String msg = task.getException() != null
+                            ? task.getException().getMessage()
+                            : "Account creation failed";
                     toast("Account creation failed: " + msg);
                 }
             });
         });
 
-        addAuthDivider(root, "or");
-        root.addView(socialButton("f", v -> toast("Facebook login is not configured yet.")));
-        root.addView(socialButton("G", v -> toast("Google login is not configured yet.")));
-        root.addView(socialButton("", v -> toast("Apple login is not configured yet.")));
-
-        TextView login = tv("Already have an Account?  Login", 14, Color.WHITE); login.setGravity(Gravity.CENTER); root.addView(login, new LinearLayout.LayoutParams(-1, dp(46)));
+        TextView login = tv("Already have an Account?  Login", 14, Color.WHITE);
+        login.setGravity(Gravity.CENTER);
+        root.addView(login, new LinearLayout.LayoutParams(-1, dp(46)));
         login.setOnClickListener(v -> { clearPageHistory(); buildLogin(); });
+
         setAuthContentView(root);
     }
 

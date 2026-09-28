@@ -212,28 +212,39 @@ public void onCreate(Bundle b) {
 
     sp = getSharedPreferences("adpoint", MODE_PRIVATE);
 
-    resetDailyCountIfNeeded();
-    validateLocalState();
+    // Initialize services safely first.
+    try {
+        mAuth = FirebaseAuth.getInstance();
+    } catch (Exception e) {
+        mAuth = null;
+    }
+
+    try {
+        db = FirebaseFirestore.getInstance();
+    } catch (Exception e) {
+        db = null;
+    }
+
+    try {
+        MobileAds.initialize(this, status -> {});
+    } catch (Exception e) {
+    }
 
     points = sp.getInt("points", 0);
     adsToday = sp.getInt("ads", 0);
 
-    try {
-    mAuth = FirebaseAuth.getInstance();
-} catch (Exception e) {
-    mAuth = null;
-}
+    // IMPORTANT: Login is always the first visible screen.
+    buildLogin();
 
-try {
-    db = FirebaseFirestore.getInstance();
-} catch (Exception e) {
-    db = null;
-}
-    
+    // Local counters must never block the Login screen.
     try {
-    MobileAds.initialize(this, status -> {});
-} catch (Exception e) {
-}
+        resetDailyCountIfNeeded();
+        validateLocalState();
+        points = sp.getInt("points", 0);
+        adsToday = sp.getInt("ads", 0);
+    } catch (Exception e) {
+        // Ignore local-state errors during startup.
+    }
  }
 
     void buildLogin() {

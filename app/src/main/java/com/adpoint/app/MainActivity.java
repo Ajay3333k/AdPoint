@@ -207,47 +207,16 @@ public class MainActivity extends Activity {
     }
 
     @Override
-    public void onCreate(Bundle b) {
-        super.onCreate(b);
+public void onCreate(Bundle b) {
+    super.onCreate(b);
 
-        try {
-    mAuth = FirebaseAuth.getInstance();
-    db = FirebaseFirestore.getInstance();
-} catch (Exception e) {
-    mAuth = null;
-    db = null;
+    TextView test = new TextView(this);
+    test.setText("AdPoint startup OK");
+    test.setTextSize(24);
+    test.setGravity(Gravity.CENTER);
+
+    setContentView(test);
 }
-
-        sp = getSharedPreferences("adpoint", MODE_PRIVATE);
-        resetDailyCountIfNeeded();
-        validateLocalState();
-
-        points = sp.getInt("points", 0);
-        adsToday = sp.getInt("ads", 0);
-
-        try {
-    MobileAds.initialize(this, status -> {});
-} catch (Exception e) {
-    // AdMob startup error must not crash AdPoint
-}
-
-        // Keep the Firebase session across app restarts. Login is required again only
-        // after logout/delete, or if the Firebase session has expired.
-        FirebaseUser existingUser = mAuth != null ? mAuth.getCurrentUser() : null;
-        if (existingUser != null && sp.getBoolean("loggedIn", false) && existingUser.isEmailVerified()) {
-            clearPageHistory();
-            buildHome();
-            loadAd();
-        } else {
-            if (existingUser != null && !existingUser.isEmailVerified()) {
-                mAuth.signOut();
-            }
-            sp.edit().putBoolean("loggedIn", false).apply();
-            clearPageHistory();
-            buildLogin();
-        }
-    }
-
 
     void buildLogin() {
         currentPage = "login";

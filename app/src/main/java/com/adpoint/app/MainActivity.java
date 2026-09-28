@@ -224,7 +224,11 @@ public void onCreate(Bundle b) {
     mAuth = null;
 }
 
-db = null;
+try {
+    db = FirebaseFirestore.getInstance();
+} catch (Exception e) {
+    db = null;
+}
     
 }
 

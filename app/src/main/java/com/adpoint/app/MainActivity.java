@@ -218,15 +218,9 @@ public void onCreate(Bundle b) {
     points = sp.getInt("points", 0);
     adsToday = sp.getInt("ads", 0);
 
-    try {
-        mAuth = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance();
-    } catch (Exception e) {
-        mAuth = null;
-        db = null;
-    }
-
-    buildLogin();
+    mAuth = null;
+db = null;
+    
 }
 
     void buildLogin() {
